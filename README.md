@@ -8,7 +8,7 @@
 
 ```bash
 docker run -d --name web dockercloud/hello-world
-docker run -d -p 80:80 --link web:web --name auth beevelop/nginx-basic-auth
+docker run -d -p 80:8080 --link web:web --name auth beevelop/nginx-basic-auth
 ```
 
 Try accessing and logging in with username `foo` and password `bar`.
@@ -19,7 +19,7 @@ Try accessing and logging in with username `foo` and password `bar`.
 docker run -d \
            -e HTPASSWD='foo:$apr1$odHl5EJN$KbxMfo86Qdve2FH4owePn.' \
            -e FORWARD_PORT=1337 \
-           --link web:web -p 8080:80 \
+           --link web:web -p 80:8080 \
            --name auth \
            beevelop/nginx-basic-auth
 ```
@@ -29,7 +29,7 @@ docker run -d \
 ## Configuration
 
 - `HTPASSWD` (default: `foo:$apr1$odHl5EJN$KbxMfo86Qdve2FH4owePn.`): Will be written to the .htpasswd file on launch (non-persistent)
-- `NGINX_PORT` (default: `80`): Port of the Nginx proxy
+- `NGINX_PORT` (default: `8080`): Internal port of the Nginx proxy. Note that the port should be higher than 1000 since Nginx is running as non-root.
 - `FORWARD_HOST` (default: `web`): Host of the **source** container that should be forwarded
 - `FORWARD_PORT` (default: `80`): Port of the **source** container that should be forwarded
 - `HEALTH_ENDPOINT` (default: `/healthz`): Endpoint that will be exposed publicly in order to do health checks. Useful in k8s cluster.
