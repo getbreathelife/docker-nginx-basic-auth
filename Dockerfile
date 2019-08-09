@@ -15,11 +15,15 @@ ENV HTPASSWD='foo:$apr1$odHl5EJN$KbxMfo86Qdve2FH4owePn.' \
 # make sure root login is disabled
 RUN sed -i -e 's/^root::/root:!:/' /etc/shadow
 
-# give permission to nginx user and run the process as nginx
+# give same permission of owner to group and assign owner to nginx user
+# this allows the container to run in k8s cluster with non-root user as well as separately without the need to specify a non-root user id 
 RUN touch /var/run/nginx.pid && \
-  chown -R nginx:nginx /var/run/nginx.pid && \
-  chown -R nginx:nginx /var/cache/nginx && \
-  chown -R nginx:nginx /etc/nginx/
+  chmod -R g=u /var/run/nginx.pid && \
+  chmod -R g=u /var/cache/nginx && \
+  chmod -R g=u /etc/nginx/ && \
+  chown -R nginx /var/run/nginx.pid && \
+  chown -R nginx /var/cache/nginx && \
+  chown -R nginx /etc/nginx/
 
 USER nginx
 
